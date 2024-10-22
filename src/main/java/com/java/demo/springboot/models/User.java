@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 			@UniqueConstraint(columnNames = "username"),
 			@UniqueConstraint(columnNames = "email") 
 		})
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
 
@@ -67,23 +67,23 @@ public class User {
 	private String specialite;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", 
-               joinColumns = @JoinColumn(name = "user_id"), 
-               inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@JsonIgnore 
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "formateur", cascade = CascadeType.ALL)
-    @JsonManagedReference("coursEnseignes") // Utilisez ManagedReference pour sérialiser
+	@JsonIgnore 
     private Set<Cours> coursEnseignes = new HashSet<>();
 
     @ManyToMany(mappedBy = "etudiants")
-    @JsonBackReference("coursInscrits")  // Utilisez BackReference pour éviter la boucle
+	@JsonIgnore 
     private Set<Cours> coursInscrits = new HashSet<>();
 
     @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonBackReference // Utilisez BackReference pour éviter la boucle
+	@JsonIgnore 
     private Set<Inscription> inscriptions = new HashSet<>();
-
 
 	
 

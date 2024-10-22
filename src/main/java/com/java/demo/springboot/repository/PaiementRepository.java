@@ -23,6 +23,7 @@ public interface PaiementRepository extends JpaRepository<Paiement, Long>{
      List<Paiement> findByEtudiantIdAndStatutPaiement(Long etudiantId, StatutPaiement statutPaiement);
      void deleteByCours(Cours cours);
     List<Paiement> findByEtudiant(User user);
+    Long countByCoursAndStatutPaiement(Cours cours, StatutPaiement statutPaiement);
    
 
 }

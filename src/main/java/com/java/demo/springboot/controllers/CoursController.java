@@ -2,8 +2,8 @@ package com.java.demo.springboot.controllers;
 
 
 import com.java.demo.springboot.models.Cours;
+import com.java.demo.springboot.models.CoursStatsDTO;
 import com.java.demo.springboot.models.CourseResponse;
-import com.java.demo.springboot.models.Inscription;
 import com.java.demo.springboot.models.User;
 import com.java.demo.springboot.repository.CoursRepository;
 import com.java.demo.springboot.repository.InscriptionRepository;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cours")
@@ -39,7 +38,8 @@ public class CoursController {
    
 
     @PreAuthorize("hasRole('ROLE_FORMATEUR')")
-    @PostMapping( consumes = "application/json")
+  //  @PostMapping( consumes = "application/json")
+  @PostMapping
     public ResponseEntity<Cours> createCours(@RequestBody Cours cours) {
         Cours createdCours = coursService.saveCours(cours);
         return ResponseEntity.ok(createdCours);
@@ -122,6 +122,13 @@ public class CoursController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Retourne 404 Not Found
         }
         return ResponseEntity.ok(etudiants);
+    }
+
+
+     @GetMapping("/{id}/stats")
+    public ResponseEntity<CoursStatsDTO> getCoursStats(@PathVariable Long id) {
+        CoursStatsDTO stats = coursService.getCoursStats(id);
+        return ResponseEntity.ok(stats);
     }
     
 }

@@ -4,8 +4,13 @@ import java.time.LocalDate;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Inscription {
 
     @Id
@@ -16,13 +21,14 @@ public class Inscription {
 
     @ManyToOne
     @JoinColumn(name = "etudiant_id")
-    @JsonBackReference // Utilisez BackReference pour éviter la boucle
+    @JsonIgnore 
     private User etudiant;
 
     @ManyToOne
     @JoinColumn(name = "cours_id")
-    @JsonManagedReference // Utilisez ManagedReference pour sérialiser
+    @JsonIgnore 
     private Cours cours;
+
 
     private int etat;
 

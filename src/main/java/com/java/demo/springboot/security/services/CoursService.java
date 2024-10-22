@@ -3,6 +3,7 @@ package com.java.demo.springboot.security.services;
 import java.util.*;
 
 import com.java.demo.springboot.models.Cours;
+import com.java.demo.springboot.models.CoursStatsDTO;
 import com.java.demo.springboot.models.User;
 
 public interface CoursService {
@@ -18,6 +19,7 @@ public interface CoursService {
     boolean isFormateurAssignedToCours(Long formateurId, Long coursId);
     List<Cours> getCoursByFormateur(Long formateurId);
     List<User> getEtudiantsByCours(Long coursId);
+     CoursStatsDTO getCoursStats(Long coursId);
    
 
 }

@@ -28,6 +28,7 @@ public interface InscriptionRepository extends JpaRepository<Inscription, Long> 
     boolean existsByEtudiantIdAndCoursId(Long etudiantId, Long coursId);
     void deleteByEtudiantId(Long etudiantId);
     List<Inscription> findByCours(Cours cours);
+    Long countByCours(Cours cours);
     
   
     

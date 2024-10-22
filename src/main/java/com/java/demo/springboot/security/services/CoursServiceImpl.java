@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.java.demo.springboot.models.Cours;
+import com.java.demo.springboot.models.CoursStatsDTO;
 import com.java.demo.springboot.models.ERole;
 import com.java.demo.springboot.models.Inscription;
 import com.java.demo.springboot.models.Paiement;
+import com.java.demo.springboot.models.StatutPaiement;
 import com.java.demo.springboot.models.User;
 import com.java.demo.springboot.repository.CoursRepository;
 import com.java.demo.springboot.repository.InscriptionRepository;
@@ -26,18 +28,26 @@ public class CoursServiceImpl implements CoursService {
 
     @Autowired
     private InscriptionRepository inscriptionRepository;
+    @Autowired
+    private PaiementRepository paiementRepository;
     
     public Cours saveCours(Cours cours) {
+        // Vérifiez si le formateur est null avant de récupérer son ID
+        if (cours.getFormateur() == null || cours.getFormateur().getId() == null) {
+            throw new IllegalArgumentException("Formateur must be provided and should not be null");
+        }
+    
         // Récupérer le formateur depuis l'id
         Long formateurId = cours.getFormateur().getId();
         User formateur = userRepository.findById(formateurId)
             .orElseThrow(() -> new RuntimeException("Formateur not found"));
-
+    
         // Assigner le formateur au cours
         cours.setFormateur(formateur);
-
+    
         return coursRepository.save(cours);
     }
+    
 
     @Override
     public Long countCourses() {
@@ -63,6 +73,7 @@ public class CoursServiceImpl implements CoursService {
             cours.setDateDebut(updatedCours.getDateDebut());
             cours.setDateFin(updatedCours.getDateFin());
             cours.setDuree(updatedCours.getDuree());
+            cours.setMontant(updatedCours.getMontant());
     
             System.out.println("Saving updated course: " + cours.toString()); // Debug log
             return coursRepository.save(cours);
@@ -112,6 +123,21 @@ public class CoursServiceImpl implements CoursService {
         }
     }
    
+
+
+    public CoursStatsDTO getCoursStats(Long coursId) {
+        Cours cours = coursRepository.findById(coursId).orElseThrow(() -> new RuntimeException("Cours non trouvé"));
+        
+        Long totalEtudiantsInscrits = inscriptionRepository.countByCours(cours);
+        Long totalEtudiantsPayants = paiementRepository.countByCoursAndStatutPaiement(cours, StatutPaiement.PAYE);
+
+        return new CoursStatsDTO(
+            cours.getId(),
+            cours.getTitre(),
+            totalEtudiantsInscrits,
+            totalEtudiantsPayants
+        );
+    }
 
 
   

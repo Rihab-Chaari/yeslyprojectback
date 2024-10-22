@@ -21,35 +21,31 @@ public class Cours {
 
     private String titre;
     private String description;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") 
     private LocalDate dateDebut;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd") 
     private LocalDate dateFin;
     private Integer duree; // en heures
     private Double montant;
-
     @ManyToOne
     @JoinColumn(name = "formateur_id")
-    @JsonBackReference("coursEnseignes") // Utilisez BackReference pour éviter la boucle
+   // @JsonIgnore 
     private User formateur;
 
     @ManyToMany
     @JoinTable(name = "cours_etudiants",
-               joinColumns = @JoinColumn(name = "cours_id"),
-               inverseJoinColumns = @JoinColumn(name = "etudiant_id"))
-    @JsonManagedReference("coursInscrits")  // Utilisez ManagedReference pour sérialiser
+            joinColumns = @JoinColumn(name = "cours_id"),
+            inverseJoinColumns = @JoinColumn(name = "etudiant_id"))
+    @JsonIgnore 
     private Set<User> etudiants = new HashSet<>();
 
     @OneToMany(mappedBy = "cours", cascade = CascadeType.ALL)
-    @JsonIgnore // Ne pas sérialiser les paiements
+    @JsonIgnore 
     private Set<Paiement> paiements = new HashSet<>();
-   @OneToMany(mappedBy = "cours", cascade = CascadeType.ALL)
-    //@JsonManagedReference
-   @JsonIgnore
-    private Set<Inscription> inscriptions = new HashSet<>();
 
-  
-    
+    @OneToMany(mappedBy = "cours", cascade = CascadeType.ALL)
+    @JsonIgnore 
+    private Set<Inscription> inscriptions = new HashSet<>();
 
 
     

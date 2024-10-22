@@ -15,14 +15,15 @@ public class Paiement {
     private Double montant;
     private LocalDate datePaiement;
 
-   @ManyToOne
+    @ManyToOne
     @JoinColumn(name = "etudiant_id")
-    @JsonBackReference // Utilisez BackReference pour éviter la boucle
+    @JsonBackReference // Éviter la boucle
     private User etudiant;
 
     @ManyToOne
     @JoinColumn(name = "cours_id")
-    @JsonManagedReference // Utilisez ManagedReference pour sérialiser
+  //  @JsonManagedReference // Gérer la relation cours
+  @JsonBackReference
     private Cours cours;
 
     @Enumerated(EnumType.STRING)
