@@ -21,12 +21,12 @@ public class Inscription {
 
     @ManyToOne
     @JoinColumn(name = "etudiant_id")
-    @JsonIgnore 
+   // @JsonIgnore 
     private User etudiant;
 
     @ManyToOne
     @JoinColumn(name = "cours_id")
-    @JsonIgnore 
+   // @JsonIgnore 
     private Cours cours;
 
 

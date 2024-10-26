@@ -10,14 +10,16 @@ import com.java.demo.springboot.payload.response.MessageResponse;
 import com.java.demo.springboot.repository.InscriptionRepository;
 import com.java.demo.springboot.security.services.CoursService;
 import com.java.demo.springboot.security.services.InscriptionService;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import java.util.HashMap;
+import java.util.ArrayList;
 @RestController
 @RequestMapping("/api/inscriptions")
 public class InscriptionController {
@@ -48,8 +50,9 @@ public class InscriptionController {
     }
 
     @GetMapping
-    public List<Inscription> getAllInscriptions() {
-        return inscriptionService.getAllInscriptions();
+    public ResponseEntity<List<Inscription>> getAllInscriptions() {
+        List<Inscription> inscriptions = inscriptionService.getAllInscriptions();
+        return ResponseEntity.ok(inscriptions);
     }
 
     @DeleteMapping("/{id}")
@@ -100,5 +103,33 @@ public ResponseEntity<List<Long>> getRegisteredCourses(@PathVariable Long etudia
         return ResponseEntity.ok(courses);
     }
     
+
+
+    @GetMapping("/recommendations/{etudiantId}")
+    public List<HashMap<String, Object>> getRecommendations(@PathVariable int etudiantId) {
+        List<HashMap<String, Object>> recommendations = new ArrayList<>();
+        try {
+            // Exécute le script Python avec l'ID de l'étudiant comme argument
+            ProcessBuilder pb = new ProcessBuilder("python", "path/to/your_script.py", String.valueOf(etudiantId));
+            Process process = pb.start();
+
+            // Lire la sortie du script
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                // Parse la ligne et ajoute aux recommandations
+                String[] parts = line.split(",");
+                HashMap<String, Object> entry = new HashMap<>();
+                entry.put("cours_id", Integer.parseInt(parts[0]));
+                entry.put("rating", Double.parseDouble(parts[1]));
+                recommendations.add(entry);
+            }
+            process.waitFor();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return recommendations;
+    }
   
 }

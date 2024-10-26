@@ -9,12 +9,16 @@ import com.java.demo.springboot.repository.CoursRepository;
 import com.java.demo.springboot.repository.InscriptionRepository;
 import com.java.demo.springboot.repository.UserRepository;
 
+import org.hibernate.mapping.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
@@ -40,8 +44,37 @@ public class InscriptionServiceImpl implements InscriptionService {
         }
     
         public List<Inscription> getAllInscriptions() {
-            return inscriptionRepository.findAll();
+            List<Inscription> inscriptions = inscriptionRepository.findAll();
+        
+            // Assurez-vous que les cours et les étudiants sont chargés
+            for (Inscription inscription : inscriptions) {
+                // Vérifiez que l'inscription a bien un cours et un étudiant associés
+                if (inscription.getCours() != null) {
+                    inscription.getCours().getId(); // Charge l'ID du cours
+                }
+                if (inscription.getEtudiant() != null) {
+                    inscription.getEtudiant().getId(); // Charge l'ID de l'étudiant
+                }
+            }
+        
+            return inscriptions;
         }
+        
+
+        public List<HashMap<String, Object>> prepareRecommendationData() {
+        List<Inscription> inscriptions = getAllInscriptions();
+        List<HashMap<String, Object>> data = new ArrayList<>();
+
+        for (Inscription inscription : inscriptions) {
+            HashMap<String, Object> entry = new HashMap<>();
+            entry.put("etudiant_id", inscription.getEtudiant().getId());
+            entry.put("cours_id", inscription.getCours().getId());
+            entry.put("etat", inscription.getEtat());  // Peut représenter un rating si l'état est une note/évaluation
+            data.add(entry);
+        }
+
+        return data;
+    }
     
         public void deleteInscription(Long id) {
             inscriptionRepository.deleteById(id);
